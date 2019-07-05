@@ -70,6 +70,6 @@ export class Image360Viewer extends Component {
       this.setState({
         currentIndex: (this.state.currentIndex % 36) + 1
       });
-    }, 00);
+    }, 300);
   }
 }
