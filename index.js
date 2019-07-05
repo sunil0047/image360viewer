@@ -1,23 +1,21 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import Hello from './Hello';
+import { Image360Viewer } from './components/Image360Viewer/Image360Viewer.js';
 import './style.css';
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
-      name: 'test'
+      baseURL: 'https://raw.githubusercontent.com/pranjalnarayan/image360viewer/master/images/',
+      type: 'jpeg'
     };
   }
 
   render() {
     return (
       <div>
-        <Hello name={this.state.name} />
-        <p>
-          Start editing to see some magic happen :)
-        </p>
+        <Image360Viewer {...this.state}/>
       </div>
     );
   }
