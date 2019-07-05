@@ -42,7 +42,7 @@ export class Image360Viewer extends Component {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = resolve;
-      
+    
       img.src = this.formImageSourceByIndex(index);
     });
   }
