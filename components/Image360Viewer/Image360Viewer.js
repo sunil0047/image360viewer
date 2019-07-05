@@ -14,9 +14,12 @@ export class Image360Viewer extends Component {
     this.cacheImages();
   }
 
+  formImageSourceByIndex(index) {
+    return this.props.baseURL + 'image' + index + '.' + this.props.type;
+  }
+
   getCurrentImageSource() {
-    return this.props.baseURL + 'image' + this.state.currentIndex + '.' +
-            this.props.type;
+    return this.formImageSourceByIndex(this.state.currentIndex);
   }
 
   renderLoading() {
@@ -35,9 +38,25 @@ export class Image360Viewer extends Component {
     return this.state.isLoading ? this.renderLoading() : this.renderViewer();
   }
 
+  cacheImage(index) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = resolve;
+      
+      img.src = this.formImageSourceByIndex(index);
+    });
+  }
+
   cacheImages() {
-    this.setState({
-      isLoading: false,
-    })
+    const imagesLoadPromise = [];
+    for (let i = 1; i < 37; i++) {
+      imagesLoadPromise.push(this.cacheImage(i));
+    }
+
+    Promise.all(imagesLoadPromise).then(() => {
+      this.setState({
+        isLoading: false,
+      })
+    });
   }
 }
