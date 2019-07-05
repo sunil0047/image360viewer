@@ -1,0 +1,10 @@
+.img_container {
+  height: 200px;
+  width: 200px;
+  cursor: move;
+}
+
+.img_container img {
+  max-height: 100%;
+  min-height: 100%;
+}
