@@ -56,7 +56,20 @@ export class Image360Viewer extends Component {
     Promise.all(imagesLoadPromise).then(() => {
       this.setState({
         isLoading: false,
-      })
+      });
+
+      this.startView();
     });
+  }
+
+  startView() {
+    let timer = setInterval(() => {
+      if (this.state.currentIndex === 36) {
+        clearTimeout(timer);
+      }
+      this.setState({
+        currentIndex: (this.state.currentIndex % 36) + 1
+      });
+    }, 00);
   }
 }
