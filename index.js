@@ -15,7 +15,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <Image360Viewer {...this.state}/>
+        <Image360Viewer {...this.state} height='400px' width='400px'/>
       </div>
     );
   }

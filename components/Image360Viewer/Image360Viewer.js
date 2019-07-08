@@ -8,6 +8,15 @@ export class Image360Viewer extends Component {
       isLoading: true,
       currentIndex: 1,
     };
+    this.isDragging = false;
+    this.moveStart = {
+      x: 0,
+      y: 0
+    };
+    this.moveStop = {
+      x: 0,
+      y: 0
+    };
   }
 
   componentWillMount() {
@@ -22,6 +31,59 @@ export class Image360Viewer extends Component {
     return this.formImageSourceByIndex(this.state.currentIndex);
   }
 
+  throttle = (func, limit) => {
+    let lastFunc;
+    let lastRan;
+    return (ev) => {
+      const context = this;
+
+      this.moveStop.x = ev.clientX;
+      this.moveStop.y = ev.clientY;
+      if (!lastRan) {
+        func.apply(context);
+        lastRan = Date.now();
+      } else {
+        clearTimeout(lastFunc)
+        lastFunc = setTimeout(function() {
+          if ((Date.now() - lastRan) >= limit) {
+            func.apply(context);
+            lastRan = Date.now();
+          }
+        }, limit - (Date.now() - lastRan));
+      }
+    }
+  }
+
+  mouseMoveHandler = (ev) => {
+    if (this.isDragging) {
+      this.moveImage(this.moveStart.x - this.moveStop.x);
+    }
+  }
+
+  mouseDownHandler = (ev) => {
+    ev.preventDefault();
+    console.log("mouse down hanlder");
+    this.moveStart.x = ev.clientX;
+    this.moveStart.y = ev.clientY;
+    this.isDragging = true;
+  }
+
+  mouseUpHandler = (ev) => {
+    ev.preventDefault();
+    console.log("mouse up hanlder");
+    this.isDragging = false;
+    this.moveStart.x = 0;
+    this.moveStart.y = 0;
+  }
+
+  mouseOverHandler = () => {
+    this.stopView();
+  }  
+
+  mouseLeaveHandler = () => {
+    this.startView();
+  }
+
   renderLoading() {
     return <div>
               Loading...
@@ -29,8 +91,21 @@ export class Image360Viewer extends Component {
   }
 
   renderViewer() {
-    return <div className="img_container">
-      <img src={this.getCurrentImageSource()}></img>
+    let style = {
+      height: this.props.height || '',
+      width: this.props.width || ''
+    };
+
+    return <div
+              className="img_container"
+              style={style}
+            >
+              <img
+                src={this.getCurrentImageSource()}
+                onMouseDown={this.mouseDownHandler}
+                onMouseMove={this.throttle(this.mouseMoveHandler, 100)}
+                onMouseUp={this.mouseUpHandler}
+              ></img>
     </div>;
   }
 
@@ -58,18 +133,42 @@ export class Image360Viewer extends Component {
         isLoading: false,
       });
 
-      this.startView();
+      // this.startView();
     });
+  }
+
+  moveImage(diff) {
+    if (diff > 0) {
+      this.setState({
+        currentIndex: (this.state.currentIndex % 36) + 1
+      });
+    } else {
+      let currentIndex = ((this.state.currentIndex % 36) - 1) || 36;
+      if (currentIndex < 0) {
+        currentIndex = 35;
+      }
+      this.setState({
+        currentIndex: currentIndex
+      });
+    }
   }
 
   startView() {
     let timer = setInterval(() => {
       if (this.state.currentIndex === 36) {
         clearTimeout(timer);
+        this.timer = null;
       }
       this.setState({
         currentIndex: (this.state.currentIndex % 36) + 1
       });
-    }, 300);
+    }, 500);
+    this.timer = timer;
+  }
+
+  stopView() {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
   }
 }
