@@ -62,7 +62,6 @@ export class Image360Viewer extends Component {
 
   mouseDownHandler = (ev) => {
     ev.preventDefault();
-    console.log("mouse down hanlder");
     this.moveStart.x = ev.clientX;
     this.moveStart.y = ev.clientY;
     this.isDragging = true;
@@ -70,7 +69,7 @@ export class Image360Viewer extends Component {
 
   mouseUpHandler = (ev) => {
     ev.preventDefault();
-    console.log("mouse up hanlder");
+
     this.isDragging = false;
     this.moveStart.x = 0;
     this.moveStart.y = 0;
@@ -103,7 +102,7 @@ export class Image360Viewer extends Component {
               <img
                 src={this.getCurrentImageSource()}
                 onMouseDown={this.mouseDownHandler}
-                onMouseMove={this.throttle(this.mouseMoveHandler, 100)}
+                onMouseMove={this.throttle(this.mouseMoveHandler, 1000)}
                 onMouseUp={this.mouseUpHandler}
               ></img>
     </div>;
